@@ -60,15 +60,21 @@
       </div>
 
       <div class="flex justify-end mt-6 space-x-2">
-        <button @click="openEditModal" class="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">Editar</button>
-        <button @click="closeModal" class="bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Fechar</button>
+        <button @click="openEditModal"
+                class="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+          Editar
+        </button>
+        <button @click="closeModal"
+                class="bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          Fechar
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import EditRouterComponent from '../modal/editRouter-component.vue';
 
 const props = defineProps({

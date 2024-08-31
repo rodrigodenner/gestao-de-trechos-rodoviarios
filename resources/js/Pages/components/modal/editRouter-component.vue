@@ -17,11 +17,13 @@
         </div>
         <div>
           <label for="edit-uf" class="block text-sm font-medium text-gray-700">KM Inicial</label>
-          <input type="text" id="edit-uf" v-model="editRoute.kmInicial" class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3">
+          <input type="text" id="edit-uf" v-model="editRoute.kmInicial"
+                 class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3">
         </div>
         <div>
           <label for="edit-uf" class="block text-sm font-medium text-gray-700">KM Final</label>
-          <input type="text" id="edit-uf" v-model="editRoute.kmFinal" class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3">
+          <input type="text" id="edit-uf" v-model="editRoute.kmFinal"
+                 class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3">
         </div>
         <div>
           <label for="edit-uf" class="block text-sm font-medium text-gray-700">Tipo</label>
@@ -30,7 +32,9 @@
           </select>
         </div>
         <div class="flex justify-end mt-6">
-          <button type="button" class="bg-indigo-500 text-white py-2 px-4 rounded-md mr-2" @click="closeModal">Cancelar</button>
+          <button type="button" class="bg-indigo-500 text-white py-2 px-4 rounded-md mr-2" @click="closeModal">
+            Cancelar
+          </button>
           <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-md">Salvar</button>
         </div>
 
@@ -40,7 +44,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue';
+import {defineProps, defineEmits, ref} from 'vue';
 
 const props = defineProps({
   isOpen: Boolean,
@@ -49,7 +53,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'save']);
 
-const editRoute = ref({ ...props.route });
+const editRoute = ref({...props.route});
 
 function closeModal() {
   emit('close');

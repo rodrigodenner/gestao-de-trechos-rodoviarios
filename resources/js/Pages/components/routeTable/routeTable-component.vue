@@ -22,13 +22,16 @@
           <td class="px-4 py-2 text-sm text-gray-700">{{ route.lote }}</td>
           <td class="px-4 py-2 text-sm text-gray-700">{{ route.situacao }}</td>
           <td class="px-4 py-2 flex items-center justify-end space-x-2">
-            <button class="bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600 flex justify-center items-center">
+            <button
+              class="bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600 flex justify-center items-center">
               <i class="fa-solid fa-map-location-dot"></i>
             </button>
-            <button @click="openDetailsModal(route)" class="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600 flex justify-center items-center">
+            <button @click="openDetailsModal(route)"
+                    class="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600 flex justify-center items-center">
               <i class="fas fa-info-circle"></i>
             </button>
-            <button class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 flex justify-center items-center">
+            <button
+              class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 flex justify-center items-center">
               <i class="fas fa-trash"></i>
             </button>
           </td>
@@ -48,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import DetailsRouterComponent from "../modal/detailsRouter-component.vue";
 
 
