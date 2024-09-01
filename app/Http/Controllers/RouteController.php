@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TrechoRequest;
+use App\Http\Requests\TrechoUpdateRequest;
 use App\Models\Rodovia;
 use App\Models\Trecho;
 use App\Models\UF;
@@ -60,19 +61,19 @@ class RouteController extends Controller
             $newRoute['geo'] = json_encode($geoData);
             $trecho->create($newRoute);
 //            return redirect()->route('route.index')->with('success', 'Trecho criado com sucesso');
-          return to_route('route.index');
+          return to_route('route.index')->with('success', 'Trecho criado com sucesso');
         }
 
-         return to_route('route.index');
+         return to_route('route.index')->with('error', 'Erro ao gerar GeoJSON');
     }
 
     public function show(Trecho $trecho, $id)
     {
         $trecho = $trecho->find($id);
         if (!$trecho) {
-            return with('error', 'Nenhum trecho encontrado');
+            return Inertia::render('Home')->with('error', 'Nenhum trecho encontrado');
         }
-        return view('show', compact('trecho'));
+        return Inertia::render('Home', compact('trecho'));
 
     }
 
@@ -80,20 +81,20 @@ class RouteController extends Controller
     {
         $route = $trecho->with(['uf', 'rodovia'])->find($id);
         if (!$route) {
-            return redirect()->back()->with('error', 'Nenhum trecho encontrado');
+            return Inertia::render('Home')->with('error', 'Nenhum trecho encontrado');
         }
 
         $ufs = UF::all();
         $rodovias = Rodovia::all();
 
-        return view('edit', compact('route', 'ufs', 'rodovias'));
+        return Inertia::render('Edit', compact('route', 'ufs', 'rodovias'));
     }
 
     public function update(TrechoUpdateRequest $request, Trecho $trecho, $id)
     {
         $route = $trecho->find($id);
         if (!$route) {
-            return redirect()->back()->with('error', 'Nenhum trecho encontrado');
+            return  to_route('route.index')->with('error', 'Nenhum trecho encontrado');
         }
 
         $routeUpdate = $request->validated();
@@ -116,12 +117,12 @@ class RouteController extends Controller
             $geoData = $this->geoService->getGeoData($params);
 
             if (!$geoData) {
-                return redirect()->back()->with('error', 'Erro ao gerar GeoJSON');
+                return to_route('route.index')->with('error', 'Erro ao gerar GeoJSON');
             }
             $route->update(['geo' => json_encode($geoData)]);
         }
 
-        return redirect()->route('route.index')->with('success', 'Trecho atualizado com sucesso');
+        return to_route('route.index')->with('success', 'Trecho atualizado com sucesso');
     }
 
 
@@ -129,10 +130,10 @@ class RouteController extends Controller
    {
        $route = $trecho->with(['uf', 'rodovia'])->find($id);
        if (!$route) {
-           return redirect()->back()->with('error', 'Nenhum trecho encontrado');
+           return to_route('route.index')->with('error', 'Nenhum trecho encontrado');
        }
 
      $route->delete();
-     return redirect()->route('route.index')->with('success', 'Trecho deletado com sucesso');
+     return to_route('route.index')->with('success', 'Trecho deletado com sucesso');
    }
 }

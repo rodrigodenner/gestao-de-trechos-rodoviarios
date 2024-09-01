@@ -1,127 +1,98 @@
 <template>
-  <div
-    v-if="isOpen"
-    class="fixed z-10 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50"
-  >
+  <div v-if="isOpen" class="fixed z-10 inset-0 overflow-y-auto flex items-center justify-center bg-black bg-opacity-50">
     <div class="bg-gray-200 rounded-lg shadow-xl max-w-md w-full p-6">
-      <h2 class="text-2xl font-bold mb-4 text-center">Editar Rota</h2>
-      <div v-if="route">
-        <div class="space-y-4">
-          <!-- Campo de UF -->
-          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
-            <label class="text-gray-600 font-medium" for="uf">UF:</label>
-            <input
-              v-model="form.uf"
-              type="text"
-              id="uf"
-              class="w-full mt-1 p-2 border border-gray-300 rounded-md"
-            />
-          </div>
-
-          <!-- Campo de BR -->
-          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
-            <label class="text-gray-600 font-medium" for="br">BR:</label>
-            <input
-              v-model="form.br"
-              type="text"
-              id="br"
-              class="w-full mt-1 p-2 border border-gray-300 rounded-md"
-            />
-          </div>
-
-          <!-- Campos de KM Inicial e KM Final -->
-          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
-            <label class="text-gray-600 font-medium" for="kmInicial">KM Inicial:</label>
-            <input
-              v-model="form.kmInicial"
-              type="number"
-              id="kmInicial"
-              class="w-full mt-1 p-2 border border-gray-300 rounded-md"
-            />
-          </div>
-
-          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
-            <label class="text-gray-600 font-medium" for="kmFinal">KM Final:</label>
-            <input
-              v-model="form.kmFinal"
-              type="number"
-              id="kmFinal"
-              class="w-full mt-1 p-2 border border-gray-300 rounded-md"
-            />
-          </div>
-
-          <!-- Adicione mais campos conforme necessário para os detalhes da rota -->
+      <h2 class="text-2xl font-semibold text-gray-800 mb-6">Editar Trecho</h2>
+      <form @submit.prevent="saveChanges" class="space-y-4">
+        <!-- UF -->
+        <div>
+          <label for="edit-uf" class="block text-sm font-medium text-gray-700">UF</label>
+          <select
+            v-model="editRoute.uf_id"
+            class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3"
+          >
+            <option v-for="uf in ufs" :value="uf.id" :key="uf.id">{{ uf.UF }}</option>
+          </select>
         </div>
-      </div>
-
-      <!-- Botões para salvar alterações ou fechar o modal -->
-      <div class="flex justify-end mt-6 space-x-2">
-        <button
-          @click="saveChanges"
-          class="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-        >
-          Salvar
-        </button>
-        <button
-          @click="closeModal"
-          class="bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Fechar
-        </button>
-      </div>
+        <!-- Rodovia -->
+        <div>
+          <label for="edit-rodovia" class="block text-sm font-medium text-gray-700">Rodovia</label>
+          <select
+            v-model="editRoute.rodovia_id"
+            class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3"
+          >
+            <option v-for="rodovia in rodovias" :value="rodovia.id" :key="rodovia.id">{{ rodovia.rodovia }}</option>
+          </select>
+        </div>
+        <!-- KM Inicial -->
+        <div>
+          <label for="edit-km-inicial" class="block text-sm font-medium text-gray-700">KM Inicial</label>
+          <input
+            type="text"
+            id="edit-km-inicial"
+            v-model="editRoute.kmInicial"
+            class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3"
+          />
+        </div>
+        <!-- KM Final -->
+        <div>
+          <label for="edit-km-final" class="block text-sm font-medium text-gray-700">KM Final</label>
+          <input
+            type="text"
+            id="edit-km-final"
+            v-model="editRoute.kmFinal"
+            class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3"
+          />
+        </div>
+        <!-- Tipo -->
+        <div>
+          <label for="edit-tipo" class="block text-sm font-medium text-gray-700">Tipo</label>
+          <select
+            v-model="editRoute.tipo"
+            class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3"
+          >
+            <option v-for="type in tipos" :value="type.value" :key="type.value">{{ type.label }}</option>
+          </select>
+        </div>
+        <!-- Botões -->
+        <div class="flex justify-end mt-6">
+          <button type="button" class="bg-indigo-500 text-white py-2 px-4 rounded-md mr-2" @click="closeModal">
+            Cancelar
+          </button>
+          <button type="submit" class="bg-green-500 text-white py-2 px-4 rounded-md">Salvar</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { defineProps, defineEmits, ref, watch } from 'vue';
 
-// Definindo as props recebidas
 const props = defineProps({
   isOpen: Boolean,
   route: Object,
+  ufs: Array,
+  rodovias: Array,
+  tipos: Array,
 });
 
-// Emite eventos para o componente pai
-const emit = defineEmits(['close', 'update-route']);
+const emit = defineEmits(['close', 'save']);
 
-// Define um objeto de formulário reativo para preencher os campos de edição
-const form = ref({
-  uf: '',
-  br: '',
-  kmInicial: 0,
-  kmFinal: 0,
-});
+const editRoute = ref({...props.route});
 
-// Atualiza o formulário sempre que a rota muda
 watch(
   () => props.route,
   (newRoute) => {
-    if (newRoute) {
-      form.value.uf = newRoute.uf.UF;
-      form.value.br = newRoute.rodovia.rodovia;
-      form.value.kmInicial = newRoute.kmInicial;
-      form.value.kmFinal = newRoute.kmFinal;
-    }
+    editRoute.value = {...newRoute};
   },
-  { immediate: true }
+  {immediate: true}
 );
 
-// Função para fechar o modal
 function closeModal() {
   emit('close');
 }
 
-// Função para salvar as alterações e atualizar a rota
 function saveChanges() {
-  const updatedRoute = {
-    ...props.route,
-    uf: {UF: form.value.uf},
-    rodovia: {rodovia: form.value.br},
-    kmInicial: form.value.kmInicial,
-    kmFinal: form.value.kmFinal,
-  };
-  emit('update-route', updatedRoute);
-  closeModal();
+  emit('save', editRoute.value);
 }
 </script>
