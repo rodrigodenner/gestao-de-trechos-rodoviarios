@@ -20,3 +20,4 @@ class UF extends Model
     return $this->hasMany(Trecho::class);
   }
 }
+
