@@ -1,59 +1,66 @@
-<!-- RouteTableComponent.vue -->
 <template>
-  <div class="bg-white p-4 rounded-lg shadow-md mb-4">
-    <div class="max-h-48 overflow-y-auto">
-      <table class="min-w-full table-auto">
-        <thead class="bg-gray-200">
-        <tr>
-          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">UF</th>
-          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">BR</th>
-          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Km Inicial</th>
-          <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Km Final</th>
-          <th class="px-4 py-2"></th>
-        </tr>
-        </thead>
-        <tbody class="bg-white">
-        <tr v-for="route in routes" :key="route.id">
-          <td class="px-4 py-2 text-sm text-gray-700">{{ route.uf.UF }}</td>
-          <td class="px-4 py-2 text-sm text-gray-700">{{ route.rodovia.rodovia }}</td>
-          <td class="px-4 py-2 text-sm text-gray-700">{{ route.kmInicial }}</td>
-          <td class="px-4 py-2 text-sm text-gray-700">{{ route.kmFinal }}</td>
-          <td class="px-4 py-2 flex items-center justify-end space-x-2">
-            <button @click="showMap(route.geo)"  class="bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600 flex justify-center items-center">
-              <i class="fa-solid fa-map-location-dot"></i>
-            </button>
-            <button
-              @click="openDetailsModal(route)"
-              class="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600 flex justify-center items-center"
-            >
-              <i class="fas fa-info-circle"></i>
-            </button>
-            <button class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 flex justify-center items-center">
-              <i class="fas fa-trash"></i>
-            </button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+  <div>
+    <!-- Tabela de Rotas -->
+    <div v-if="routes.length > 0" class="bg-white p-4 rounded-lg shadow-md mb-4">
+      <div class="max-h-48 overflow-y-auto">
+        <table class="min-w-full table-auto">
+          <thead class="bg-gray-200">
+          <tr>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">UF</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">BR</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Km Inicial</th>
+            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Km Final</th>
+            <th class="px-4 py-2"></th>
+          </tr>
+          </thead>
+          <tbody class="bg-white">
+          <tr v-for="route in routes" :key="route.id">
+            <td class="px-4 py-2 text-sm text-gray-700">{{ route.uf.UF }}</td>
+            <td class="px-4 py-2 text-sm text-gray-700">{{ route.rodovia.rodovia }}</td>
+            <td class="px-4 py-2 text-sm text-gray-700">{{ route.kmInicial }}</td>
+            <td class="px-4 py-2 text-sm text-gray-700">{{ route.kmFinal }}</td>
+            <td class="px-4 py-2 flex items-center justify-end space-x-2">
+              <button @click="showMap(route.geo)" class="bg-blue-500 text-white py-1 px-3 rounded-md hover:bg-blue-600 flex justify-center items-center">
+                <i class="fa-solid fa-map-location-dot"></i>
+              </button>
+              <button @click="openDetailsModal(route)" class="bg-yellow-500 text-white py-1 px-3 rounded-md hover:bg-yellow-600 flex justify-center items-center">
+                <i class="fas fa-info-circle"></i>
+              </button>
+              <form @submit.prevent="() => deleteUser(route.id)">
+                <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 flex justify-center items-center">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
+    <!-- Mensagem quando não há rotas -->
+    <div v-else class="bg-white p-4 rounded-lg shadow-md mb-4 text-center text-gray-500">
+      Nenhuma Rota cadastrada
+    </div>
 
+    <!-- Componente de Detalhes -->
+    <details-router-component
+      :isOpen="isDetailsModalOpen"
+      :route="selectedRoute"
+      @close="closeDetailsModal"
+    />
+
+    <!-- Mapa -->
+    <div class="bg-white p-4 rounded-lg shadow-md">
+      <div class="h-96" id="map-container"></div>
+    </div>
   </div>
-
-  <div class=" bg-white p-4 rounded-lg shadow-md">
-    <div class=" h-96" id="map-container"></div>
-  </div>
-
-  <!-- Componente de Detalhes -->
-  <details-router-component
-    :isOpen="isDetailsModalOpen"
-    :route="selectedRoute"
-    @close="closeDetailsModal"
-  />
 </template>
 
 <script>
+import { ref, watch } from 'vue';
 import DetailsRouterComponent from "../modal/detailsRouter-component.vue";
+import { router } from "@inertiajs/vue3";
 
 export default {
   name: 'RouteTableComponent',
@@ -66,53 +73,76 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      isDetailsModalOpen: false,
-      selectedRoute: null,
-      map: null, // Variável para armazenar a instância do mapa
+  setup(props) {
+    const isDetailsModalOpen = ref(false);
+    const selectedRoute = ref(null);
+    const map = ref(null);
+
+    const routes = ref(props.routes);
+
+    watch(() => props.routes, (newRoutes) => {
+      routes.value = newRoutes;
+    });
+
+    const openDetailsModal = (route) => {
+      selectedRoute.value = route;
+      isDetailsModalOpen.value = true;
     };
-  },
-  created() {
-    // Log dos dados de routes ao criar o componente
-    console.log('Dados recebidos pela prop routes:', this.routes);
-  },
-  methods: {
-    openDetailsModal(route) {
-      this.selectedRoute = route;
-      this.isDetailsModalOpen = true;
-    },
-    closeDetailsModal() {
-      this.isDetailsModalOpen = false;
-      this.selectedRoute = null;
-    },
-    showMap(geoJson) {
-      // Transforma a string em um objeto JavaScript
+
+    const closeDetailsModal = () => {
+      isDetailsModalOpen.value = false;
+      selectedRoute.value = null;
+    };
+
+    const deleteUser = (id) => {
+      if (confirm('Você tem certeza que deseja excluir esta rota?')) {
+        router.delete(route('route.destroy', { id }), {
+          onSuccess: () => {
+            // Ação após a exclusão bem-sucedida
+            console.log('Rota excluída com sucesso.');
+          },
+          onError: (error) => {
+            console.error('Erro ao excluir a rota:', error);
+            // Exiba uma mensagem de erro, se necessário
+          }
+        });
+      }
+    };
+
+
+
+    const showMap = (geoJson) => {
       const parsedGeoJson = JSON.parse(geoJson);
 
-      // Remove o mapa existente, se houver
-      if (this.map) {
-        this.map.remove();
+      if (map.value) {
+        map.value.remove();
       }
 
-      // Inicializa o mapa no contêiner
-      this.map = L.map('map-container').setView(
+      map.value = L.map('map-container').setView(
         [parsedGeoJson.geometry.coordinates[0][0][1], parsedGeoJson.geometry.coordinates[0][0][0]],
         13
       );
 
-      // Adiciona uma camada de tiles ao mapa (OpenStreetMap)
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(this.map);
+      }).addTo(map.value);
 
-      // Adiciona o GeoJSON ao mapa
-      L.geoJSON(parsedGeoJson).addTo(this.map);
-    }
-  },
+      L.geoJSON(parsedGeoJson).addTo(map.value);
+    };
+
+    return {
+      isDetailsModalOpen,
+      selectedRoute,
+      routes,
+      openDetailsModal,
+      closeDetailsModal,
+      showMap,
+      deleteUser
+    };
+  }
 };
 </script>
 
-
-
-
+<style scoped>
+/* Adicione estilos específicos se necessário */
+</style>
