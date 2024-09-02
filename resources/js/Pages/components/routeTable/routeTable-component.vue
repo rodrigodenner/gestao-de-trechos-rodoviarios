@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Tabela de Rotas -->
     <div v-if="routes.length > 0" class="bg-white p-4 rounded-lg shadow-md mb-4">
       <div class="max-h-48 overflow-y-auto">
         <table class="min-w-full table-auto">
@@ -77,7 +76,7 @@ export default {
     const isDetailsModalOpen = ref(false);
     const selectedRoute = ref(null);
     const map = ref(null);
-    const showMapContainer = ref(true); // Flag to control map visibility
+    const showMapContainer = ref(true);
 
     const routes = ref(props.routes);
 
@@ -93,8 +92,8 @@ export default {
     };
 
     const openDetailsModal = (route) => {
-      clearMap(); // Limpa o mapa antes de abrir o modal
-      showMapContainer.value = false; // Oculta o mapa
+      clearMap();
+      showMapContainer.value = false;
       selectedRoute.value = route;
       isDetailsModalOpen.value = true;
     };
@@ -102,22 +101,11 @@ export default {
     const closeDetailsModal = () => {
       isDetailsModalOpen.value = false;
       selectedRoute.value = null;
-      showMapContainer.value = true; // Reexibe o mapa, se desejado
+      showMapContainer.value = true;
     };
 
     const deleteUser = (id) => {
-      if (confirm('Você tem certeza que deseja excluir esta rota?')) {
-        router.delete(route('route.destroy', { id }), {
-          onSuccess: () => {
-            // Ação após a exclusão bem-sucedida
-            console.log('Rota excluída com sucesso.');
-          },
-          onError: (error) => {
-            console.error('Erro ao excluir a rota:', error);
-            // Exiba uma mensagem de erro, se necessário
-          }
-        });
-      }
+        router.delete(route('route.destroy', { id }))
     };
 
     const showMap = (geoJson) => {
@@ -152,7 +140,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-/* Adicione estilos específicos se necessário */
-</style>

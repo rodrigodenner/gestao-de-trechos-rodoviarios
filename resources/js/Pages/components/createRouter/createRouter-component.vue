@@ -89,8 +89,8 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import {ref} from 'vue';
+import {useForm} from '@inertiajs/vue3';
 
 export default {
   name: 'CreateRouterComponent',
@@ -104,7 +104,7 @@ export default {
       type: Array,
       required: true,
     },
-    errors: Object // Adicione esta linha para receber erros como props
+    errors: Object
   },
 
   setup(props) {

@@ -1,7 +1,8 @@
 <template>
+
   <div>
-    <create-router-component :ufs="ufs" :rodovias="rodovias" :errors="errors" />
-    <route-table-component :routes="routes" />
+    <create-router-component :ufs="ufs" :rodovias="rodovias" :errors="errors"/>
+    <route-table-component :routes="routes"/>
   </div>
 </template>
 
@@ -10,6 +11,7 @@ import CreateRouterComponent from "./components/createRouter/createRouter-compon
 import RouteTableComponent from "./components/routeTable/routeTable-component.vue";
 import MasterTemplate from "./Layout/MasterTemplate.vue";
 import MapComponent from "./components/map/map-component.vue";
+
 
 export default {
   name: 'Home',
@@ -34,7 +36,7 @@ export default {
     },
     errors: {
       type: Object,
-      default: () => ({}) // Inicializa erros como um objeto vazio se não houver
+      default: () => ({})
     }
   },
 };

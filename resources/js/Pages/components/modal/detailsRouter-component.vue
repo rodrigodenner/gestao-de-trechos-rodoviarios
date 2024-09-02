@@ -4,7 +4,6 @@
       <h2 class="text-2xl font-bold mb-4 text-center">Detalhes da Rota</h2>
       <div v-if="route">
         <div class="space-y-4">
-          <!-- Detalhes da Rota -->
           <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 shadow-sm">
             <div class="flex justify-between items-center">
               <span class="text-gray-600 font-medium">UF:</span>
@@ -32,7 +31,6 @@
         </div>
       </div>
 
-      <!-- Botões -->
       <div class="flex justify-end mt-6 space-x-2">
           <button
             class="bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
@@ -43,8 +41,7 @@
 
         <button
           @click="closeModal"
-          class="bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
+          class="bg-indigo-500 text-white py-2 px-4 rounded-md hover:bg-indigo-600 shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
           Fechar
         </button>
       </div>

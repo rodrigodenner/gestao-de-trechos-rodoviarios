@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TrechoRequest;
-use App\Http\Requests\TrechoUpdateRequest;
 use App\Models\Rodovia;
 use App\Models\Trecho;
 use App\Models\UF;
@@ -60,7 +59,6 @@ class RouteController extends Controller
         if ($geoData) {
             $newRoute['geo'] = json_encode($geoData);
             $trecho->create($newRoute);
-//            return redirect()->route('route.index')->with('success', 'Trecho criado com sucesso');
           return to_route('route.index')->with('success', 'Trecho criado com sucesso');
         }
 

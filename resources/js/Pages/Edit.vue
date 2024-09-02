@@ -3,8 +3,6 @@
     <div class="bg-gray-200 rounded-lg shadow-xl max-w-md w-full p-6">
       <h2 class="text-2xl font-semibold text-gray-800 mb-6">Editar Trecho</h2>
       <form @submit.prevent="submitForm" class="space-y-4">
-
-        <!-- UF -->
         <div>
           <label for="edit-uf" class="block text-sm font-medium text-gray-700">UF</label>
           <select
@@ -17,7 +15,6 @@
           <div v-if="errors.uf_id" class="text-red-500 text-sm mt-1">{{ errors.uf_id }}</div>
         </div>
 
-        <!-- Rodovia -->
         <div>
           <label for="edit-rodovia" class="block text-sm font-medium text-gray-700">Rodovia</label>
           <select
@@ -29,7 +26,6 @@
           <div v-if="errors.rodovia_id" class="text-red-500 text-sm mt-1">{{ errors.rodovia_id }}</div>
         </div>
 
-        <!-- KM Inicial -->
         <div>
           <label for="edit-km-inicial" class="block text-sm font-medium text-gray-700">KM Inicial</label>
           <input
@@ -41,7 +37,6 @@
           <div v-if="errors.kmInicial" class="text-red-500 text-sm mt-1">{{ errors.kmInicial }}</div>
         </div>
 
-        <!-- KM Final -->
         <div>
           <label for="edit-km-final" class="block text-sm font-medium text-gray-700">KM Final</label>
           <input
@@ -53,7 +48,6 @@
           <div v-if="errors.kmFinal" class="text-red-500 text-sm mt-1">{{ errors.kmFinal }}</div>
         </div>
 
-        <!-- Tipo -->
         <div>
           <label for="edit-tipo" class="block text-sm font-medium text-gray-700">Tipo</label>
           <select
@@ -67,7 +61,6 @@
           <div v-if="errors.tipo" class="text-red-500 text-sm mt-1">{{ errors.tipo }}</div>
         </div>
 
-        <!-- Botões -->
         <div class="flex justify-end mt-6">
           <button type="button" class="bg-indigo-500 text-white py-2 px-4 rounded-md mr-2" @click="closeModal">
             Cancelar
@@ -125,7 +118,6 @@ export default {
     const submitForm = () => {
       form.put(route('route.update', {id: props.route.id}), {
         onError: (errors) => {
-          // Atualize a prop de erros com a resposta do servidor
           Object.assign(props.errors, errors);
         },
         onSuccess: () => {
@@ -144,7 +136,7 @@ export default {
       filterRodovias,
       submitForm,
       closeModal,
-      errors: props.errors, // Inclua a prop de erros aqui
+      errors: props.errors,
     };
   }
 };
