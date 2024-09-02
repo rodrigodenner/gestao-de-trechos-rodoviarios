@@ -54,11 +54,14 @@
           <label for="edit-tipo" class="block text-sm font-medium text-gray-700">Tipo</label>
           <select
             v-model="form.tipo"
-            class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3">
-            <option value="B"></option>
+            class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3"
+            required
+          >
+            <option value="" disabled selected>Selecione um tipo</option>
             <option value="B">B</option>
           </select>
         </div>
+
 
         <!-- Botões -->
         <div class="flex justify-end mt-6">
@@ -74,7 +77,7 @@
 
 <script>
 import { ref } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import {router, useForm} from '@inertiajs/vue3';
 
 export default {
   props: {
@@ -125,7 +128,7 @@ export default {
     };
 
     const closeModal = () => {
-      // Logica para fechar o modal
+      router.visit(route('route.index'));
     };
 
     return {

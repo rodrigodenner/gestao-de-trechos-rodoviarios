@@ -9,8 +9,9 @@
           v-model="form.uf_id"
           id="uf"
           @change="filterRodovias"
+          required
         >
-          <option value="">UF</option>
+          <option value="" disabled selected>UF</option>
           <option v-for="uf in ufs" :key="uf.id" :value="uf.id">{{ uf.UF }}</option>
         </select>
       </div>
@@ -20,8 +21,9 @@
           class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-base leading-5"
           v-model="form.rodovia_id"
           id="rodovia"
+          required
         >
-          <option value="">Rodovia</option>
+          <option value="" disabled selected>Rodovia</option>
           <option v-for="rodovia in filteredRodovias" :key="rodovia.id" :value="rodovia.id">
             {{ rodovia.rodovia }}
           </option>
@@ -34,6 +36,7 @@
           type="number"
           v-model="form.kmInicial"
           id="kmInicial"
+          required
         />
       </div>
       <div>
@@ -43,6 +46,7 @@
           type="number"
           v-model="form.kmFinal"
           id="kmFinal"
+          required
         />
       </div>
       <div>
@@ -51,8 +55,9 @@
           class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-base leading-5"
           v-model="form.tipo"
           id="tipo"
+          required
         >
-          <option value="">Tipo</option>
+          <option value="" disabled selected>Tipo</option>
           <option value="B">B</option>
         </select>
       </div>
@@ -63,6 +68,7 @@
           type="date"
           v-model="form.data_referencia"
           id="data_referencia"
+          required
         />
       </div>
       <div class="flex items-end">
@@ -76,6 +82,7 @@
     </form>
   </div>
 </template>
+
 
 <script>
 import { ref } from 'vue';
