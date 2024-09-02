@@ -94,6 +94,4 @@ Siga os passos abaixo para clonar e rodar o projeto em sua máquina local:
 
 <img src="home_image_2.png">
 
-## Considerações Finais
 
-Certifique-se de seguir as melhores práticas de desenvolvimento ao trabalhar com este projeto. Realize testes completos para garantir a funcionalidade e estabilidade do sistema.
