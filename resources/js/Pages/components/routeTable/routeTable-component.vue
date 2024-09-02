@@ -51,7 +51,7 @@
     />
 
     <!-- Mapa -->
-    <div class="bg-white p-4 rounded-lg shadow-md">
+    <div class="bg-white p-4 rounded-lg shadow-md" v-if="showMapContainer">
       <div class="h-96" id="map-container"></div>
     </div>
   </div>
@@ -77,6 +77,7 @@ export default {
     const isDetailsModalOpen = ref(false);
     const selectedRoute = ref(null);
     const map = ref(null);
+    const showMapContainer = ref(true); // Flag to control map visibility
 
     const routes = ref(props.routes);
 
@@ -84,7 +85,16 @@ export default {
       routes.value = newRoutes;
     });
 
+    const clearMap = () => {
+      if (map.value) {
+        map.value.remove();
+        map.value = null;
+      }
+    };
+
     const openDetailsModal = (route) => {
+      clearMap(); // Limpa o mapa antes de abrir o modal
+      showMapContainer.value = false; // Oculta o mapa
       selectedRoute.value = route;
       isDetailsModalOpen.value = true;
     };
@@ -92,6 +102,7 @@ export default {
     const closeDetailsModal = () => {
       isDetailsModalOpen.value = false;
       selectedRoute.value = null;
+      showMapContainer.value = true; // Reexibe o mapa, se desejado
     };
 
     const deleteUser = (id) => {
@@ -108,8 +119,6 @@ export default {
         });
       }
     };
-
-
 
     const showMap = (geoJson) => {
       const parsedGeoJson = JSON.parse(geoJson);
@@ -137,7 +146,8 @@ export default {
       openDetailsModal,
       closeDetailsModal,
       showMap,
-      deleteUser
+      deleteUser,
+      showMapContainer
     };
   }
 };
