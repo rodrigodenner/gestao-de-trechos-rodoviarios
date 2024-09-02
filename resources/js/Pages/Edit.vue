@@ -98,7 +98,7 @@ export default {
       rodovia_id: props.route.rodovia_id || '',
       kmInicial: props.route.kmInicial || '',
       kmFinal: props.route.kmFinal || '',
-      tipo: 'B', // Valor fixo para o tipo
+      tipo: 'B',
       data_referencia: props.route.data_referencia || '',
     });
 
