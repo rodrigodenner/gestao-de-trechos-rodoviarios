@@ -90,7 +90,7 @@ class RouteController extends Controller
         return Inertia::render('Edit', compact('route', 'ufs', 'rodovias'));
     }
 
-    public function update(TrechoUpdateRequest $request, Trecho $trecho, $id)
+    public function update(TrechoRequest $request, Trecho $trecho, $id)
     {
         $route = $trecho->find($id);
         if (!$route) {

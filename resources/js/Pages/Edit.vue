@@ -14,6 +14,7 @@
           >
             <option v-for="uf in ufs" :value="uf.id" :key="uf.id">{{ uf.UF }}</option>
           </select>
+          <div v-if="errors.uf_id" class="text-red-500 text-sm mt-1">{{ errors.uf_id }}</div>
         </div>
 
         <!-- Rodovia -->
@@ -25,28 +26,31 @@
           >
             <option v-for="rodovia in filteredRodovias" :value="rodovia.id" :key="rodovia.id">{{ rodovia.rodovia }}</option>
           </select>
+          <div v-if="errors.rodovia_id" class="text-red-500 text-sm mt-1">{{ errors.rodovia_id }}</div>
         </div>
 
         <!-- KM Inicial -->
         <div>
           <label for="edit-km-inicial" class="block text-sm font-medium text-gray-700">KM Inicial</label>
           <input
-            type="text"
+            type="number"
             id="edit-km-inicial"
             v-model="form.kmInicial"
             class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3"
           />
+          <div v-if="errors.kmInicial" class="text-red-500 text-sm mt-1">{{ errors.kmInicial }}</div>
         </div>
 
         <!-- KM Final -->
         <div>
           <label for="edit-km-final" class="block text-sm font-medium text-gray-700">KM Final</label>
           <input
-            type="text"
+            type="number"
             id="edit-km-final"
             v-model="form.kmFinal"
             class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3"
           />
+          <div v-if="errors.kmFinal" class="text-red-500 text-sm mt-1">{{ errors.kmFinal }}</div>
         </div>
 
         <!-- Tipo -->
@@ -57,11 +61,11 @@
             class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3"
             required
           >
-            <option value="" disabled selected>Selecione um tipo</option>
+            <option value="" disabled>Selecione um tipo</option>
             <option value="B">B</option>
           </select>
+          <div v-if="errors.tipo" class="text-red-500 text-sm mt-1">{{ errors.tipo }}</div>
         </div>
-
 
         <!-- Botões -->
         <div class="flex justify-end mt-6">
@@ -77,7 +81,7 @@
 
 <script>
 import { ref } from 'vue';
-import {router, useForm} from '@inertiajs/vue3';
+import { router, useForm } from '@inertiajs/vue3';
 
 export default {
   props: {
@@ -93,9 +97,12 @@ export default {
       type: Object,
       required: true,
     },
+    errors: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props) {
-    // Preenche o formulário com os dados da rota recebida
     const form = useForm({
       uf_id: props.route.uf_id || '',
       rodovia_id: props.route.rodovia_id || '',
@@ -107,21 +114,21 @@ export default {
 
     const filteredRodovias = ref([]);
 
-    // Filtra rodovias baseadas na UF selecionada
     const filterRodovias = () => {
       filteredRodovias.value = props.rodovias.filter(rodovia => rodovia.uf_id === form.uf_id);
     };
 
-    // Filtrando rodovias na carga inicial se houver uma UF selecionada
     if (form.uf_id) {
       filterRodovias();
     }
 
-    // Submissão do formulário
     const submitForm = () => {
-      form.put(route('route.update', { id: props.route.id }), {
+      form.put(route('route.update', {id: props.route.id}), {
+        onError: (errors) => {
+          // Atualize a prop de erros com a resposta do servidor
+          Object.assign(props.errors, errors);
+        },
         onSuccess: () => {
-          // Fechar modal ou redirecionar após salvar
           closeModal();
         },
       });
@@ -137,6 +144,7 @@ export default {
       filterRodovias,
       submitForm,
       closeModal,
+      errors: props.errors, // Inclua a prop de erros aqui
     };
   }
 };

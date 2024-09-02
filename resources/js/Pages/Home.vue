@@ -1,19 +1,11 @@
-<!-- Home.vue -->
 <template>
   <div>
-
-    <create-router-component :ufs="ufs" :rodovias="rodovias" />
-
+    <create-router-component :ufs="ufs" :rodovias="rodovias" :errors="errors" />
     <route-table-component :routes="routes" />
-
-
   </div>
-
 </template>
 
 <script>
-
-
 import CreateRouterComponent from "./components/createRouter/createRouter-component.vue";
 import RouteTableComponent from "./components/routeTable/routeTable-component.vue";
 import MasterTemplate from "./Layout/MasterTemplate.vue";
@@ -26,7 +18,6 @@ export default {
     MapComponent,
     RouteTableComponent,
     CreateRouterComponent
-
   },
   props: {
     routes: {
@@ -41,7 +32,10 @@ export default {
       type: Array,
       required: true,
     },
+    errors: {
+      type: Object,
+      default: () => ({}) // Inicializa erros como um objeto vazio se não houver
+    }
   },
-
 };
 </script>

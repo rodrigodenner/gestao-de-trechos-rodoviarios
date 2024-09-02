@@ -1,4 +1,3 @@
-<!-- CreateRouterComponent.vue -->
 <template>
   <div class="bg-white p-4 rounded-lg shadow-md mb-4">
     <form class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4" @submit.prevent="submitForm">
@@ -9,11 +8,12 @@
           v-model="form.uf_id"
           id="uf"
           @change="filterRodovias"
-          required
+
         >
           <option value="" disabled selected>UF</option>
           <option v-for="uf in ufs" :key="uf.id" :value="uf.id">{{ uf.UF }}</option>
         </select>
+        <div v-if="errors.uf_id" class="text-red-500 text-sm">{{ errors.uf_id }}</div>
       </div>
       <div>
         <label for="rodovia" class="block text-sm font-medium text-gray-700">Escolha a Rodovia:</label>
@@ -21,13 +21,14 @@
           class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-base leading-5"
           v-model="form.rodovia_id"
           id="rodovia"
-          required
+
         >
           <option value="" disabled selected>Rodovia</option>
           <option v-for="rodovia in filteredRodovias" :key="rodovia.id" :value="rodovia.id">
             {{ rodovia.rodovia }}
           </option>
         </select>
+        <div v-if="errors.rodovia_id" class="text-red-500 text-sm">{{ errors.rodovia_id }}</div>
       </div>
       <div>
         <label for="km-inicial" class="block text-sm font-medium text-gray-700">KM Inicial</label>
@@ -36,8 +37,9 @@
           type="number"
           v-model="form.kmInicial"
           id="kmInicial"
-          required
+
         />
+        <div v-if="errors.kmInicial" class="text-red-500 text-sm">{{ errors.kmInicial }}</div>
       </div>
       <div>
         <label for="km-final" class="block text-sm font-medium text-gray-700">KM Final</label>
@@ -46,8 +48,9 @@
           type="number"
           v-model="form.kmFinal"
           id="kmFinal"
-          required
+
         />
+        <div v-if="errors.kmFinal" class="text-red-500 text-sm">{{ errors.kmFinal }}</div>
       </div>
       <div>
         <label for="tipo" class="block text-sm font-medium text-gray-700">Tipo</label>
@@ -55,11 +58,12 @@
           class="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md py-2 px-3 text-base leading-5"
           v-model="form.tipo"
           id="tipo"
-          required
+
         >
           <option value="" disabled selected>Tipo</option>
           <option value="B">B</option>
         </select>
+        <div v-if="errors.tipo" class="text-red-500 text-sm">{{ errors.tipo }}</div>
       </div>
       <div>
         <label for="data_referencia">Data de Referência:</label>
@@ -68,8 +72,9 @@
           type="date"
           v-model="form.data_referencia"
           id="data_referencia"
-          required
+
         />
+        <div v-if="errors.data_referencia" class="text-red-500 text-sm">{{ errors.data_referencia }}</div>
       </div>
       <div class="flex items-end">
         <button
@@ -82,7 +87,6 @@
     </form>
   </div>
 </template>
-
 
 <script>
 import { ref } from 'vue';
@@ -100,6 +104,7 @@ export default {
       type: Array,
       required: true,
     },
+    errors: Object // Adicione esta linha para receber erros como props
   },
 
   setup(props) {
