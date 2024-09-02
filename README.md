@@ -28,7 +28,7 @@ Siga os passos abaixo para clonar e rodar o projeto em sua máquina local:
 1. **Clone o Repositório:**
 
    ```bash
-   git clone https://github.com/SeuUsuario/gestao-trechos-rodoviarios.git
+   git clone https://github.com/rodrigodenner/gestao-de-trechos-rodoviarios.git
    cd gestao-trechos-rodoviarios
    ```
 
