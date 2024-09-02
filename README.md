@@ -1,167 +1,99 @@
 
-# INSTALAÇÃO INERTIA JS
-Configuração básica do Laravel com Inertia.js para uma experiência de desenvolvimento dinâmica e eficiente. Direto ao Ponto
+# Sistema de Gestão de Trechos Rodoviários
 
-## INSTALAR O INERTIA DENTRO DO SEU PROJETO LARAVEL
+Este projeto é um sistema desenvolvido para o cadastro e gerenciamento de trechos de rodovias. O sistema permite aos usuários cadastrar, visualizar, editar e excluir trechos, além de exibir um mapa com a visualização espacial dos trechos cadastrados utilizando a biblioteca Leaflet.
 
-```php
-composer require inertiajs/inertia-laravel
-```
+<img src="home_image.png">
 
-## ATUALIZAAR O WELCOME.BLADE.PHP para APP.BLADE.PHP E SUBSTITUIR O CONTEÚDO
+## Funcionalidades
 
-```html
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-        @routes
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
-        @vite('resources/js/app.js')
-        @inertiaHead
-    </head>
-    <body>
-        @inertia
-    </body>
-</html>
-```
+- **Cadastro de Trechos**: Permite o cadastro de novos trechos com informações como Unidade da Federação (UF), Rodovia, Tipo de Trecho, Quilometragem Inicial e Final, e Data de Referência.
+- **Listagem de Trechos**: Exibe uma tabela paginada com todos os trechos cadastrados, permitindo a edição ou exclusão de um trecho específico.
+- **Visualização de Mapas**: Exibe um mapa com a visualização dos trechos cadastrados, utilizando dados de geometria armazenados no banco de dados.
+- **Edição e Exclusão**: Possibilita a edição e exclusão dos trechos cadastrados diretamente na listagem.
 
-## CRIAR E APONTAR O MIDDLEWARE DO INERTIA
+## Tecnologias Utilizadas
 
-```php
-php artisan inertia:middleware
-```
+- **Backend**: Laravel 10.x
+- **Frontend**: Vue.js com Composition API, Inertia.js
+- **Banco de Dados**: MySQL
+- **Biblioteca de Mapas**: Leaflet
 
-- No arquivo kernel.php em App\Http\Kernel; registrar o middleware
+<img src="home_image_3.png">
 
-```php
-'web' => [
-    // ...
-    \App\Http\Middleware\HandleInertiaRequests::class,
-],
-```
+## Instruções de Instalação
 
-## Arquivo app.js (Arquivo JS principal da aplicação)
+Siga os passos abaixo para clonar e rodar o projeto em sua máquina local:
 
-<aside>
-👉🏼 A configuração especial do pacote Ziggy jé está feita no arquivo
+1. **Clone o Repositório:**
 
-</aside>
+   ```bash
+   git clone https://github.com/SeuUsuario/gestao-trechos-rodoviarios.git
+   cd gestao-trechos-rodoviarios
+   ```
 
-- Ziggy é para conseguirmos gerenciar as rotas por names
+2. **Configure o Banco de Dados:**
 
-```jsx
-import {createApp, h } from 'vue';
-import { createInertiaApp,Link } from '@inertiajs/vue3';
-import NProgress from 'nprogress';
-import { router } from '@inertiajs/vue3';
-import route from 'ziggy-js';
+  - Crie um banco de dados MySQL.
+  - Renomeie o arquivo `.env.example` para `.env`.
+  - Informe os parâmetros do banco de dados no arquivo `.env`:
 
-router.on('start', () => NProgress.start());
-router.on('finish', () => NProgress.done());
+    ```
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=nome_do_banco
+    DB_USERNAME=nome_do_usuario
+    DB_PASSWORD=senha
+    ```
 
-createInertiaApp({
-    resolve: name => {
-        const pages = import.meta.glob('./Pages/**/*.vue', { eager: true })
-        return pages[`./Pages/${name}.vue`]
-    },
-    setup({ el, App, props, plugin }) {
+3. **Instale as Dependências do Composer:**
 
-        const VueApp = createApp({ render: () => h(App, props) });
-        VueApp.config.globalProperties.$route = route;
-        VueApp.component('Link',Link)
-            .use(plugin)
-            .mount(el);
-    },
-});
-```
+   ```bash
+   composer install
+   ```
 
-## CRIANDO DIRETÓRIO Pages
+4. **Gere a APP_KEY:**
 
-<aside>
-👉🏼 resources/js/Pages ⇒ Caminho para esse novo diretório
+   ```bash
+   php artisan key:generate
+   ```
 
-</aside>
+5. **Instale as Dependências do NPM:**
 
-Essa pasta é criado, porque no passo anterior definimos que a Aplicação buscará os componentes nesse diretório
+   ```bash
+   npm install
+   ```
 
-## INSTALANDO O PROGRASS INERTIA
+6. **Execute as Migrações:**
 
-- Comando de download
+   ```bash
+   php artisan migrate
+   ```
 
-```php
-npm install nprogress
-```
+7. **Importe os Dados Iniciais:**
 
-- Inserindo estilização do progress
+  - Abra o banco de dados e importe os arquivos de UF para a tabela `ufs` e o arquivo de Rodovia para a tabela `rodovias`.
+  - Você pode fazer o download dos arquivos necessários neste [link](https://drive.google.com/drive/folders/1wmtK7Y6xoLY0CPD0HmxI2ZNLP-Y_RUZX?usp=sharing).
 
-```html
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
-```
+8. **Inicie o Servidor Laravel:**
 
-- Inserir no JS o seguinte código (já inserimos no passo anterior)
+   ```bash
+   php artisan serve
+   ```
 
-```jsx
-import NProgress from 'nprogress';
-import { router } from '@inertiajs/vue3';
+9. **Inicie o Servidor do Vue.js:**
 
-router.on('start', () => NProgress.start());
-router.on('finish', () => NProgress.done());
-```
+   ```bash
+   npm run dev
+   ```
 
-## CONFIGURAR A PRIMEIRA ROTA TESTE
+10. **Acesse o Sistema:**
 
-```php
-use \Inertia\Inertia;
+  - Abra o navegador e acesse o link fornecido pelo servidor Laravel.
 
-Route::get('/', function () {
-    return Inertia::render('Home',[
-        "lhpires" => ["name" => "Lucas Pires", "email" => "lucas@pires.dev.br"]
-    ]);
-})->name('homeSweetHome');
-```
+<img src="home_image_2.png">
 
-- Criar componente VUE Home.vue ⇒ resources/js/Pages
+## Considerações Finais
 
-## MAPEAMENTO COM VITE CONFIG
-
-<aside>
-👉🏼 Destaque para o vue() e também o alias do Ziggy
-
-</aside>
-
-```php
-import { defineConfig } from 'vite';
-import vue from "@vitejs/plugin-vue";
-import laravel from 'laravel-vite-plugin';
-import path from 'path';
-
-export default defineConfig({
-    plugins: [
-        vue(),
-        laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: true,
-        }),
-    ],
-    resolve: {
-        alias: {
-            'ziggy-js': path.resolve(__dirname, 'vendor/tightenco/ziggy'),
-        },
-    },
-});
-```
-
-## ADICIONAL PARA USAR ROTAS NOMEADAS DENTRO DO SEU AMBIENTE DE DESENVOLVIMENTO
-
-<aside>
-👇🏼 Abaixo, link para o gitHub Ziggy
-
-</aside>
-
-[https://github.com/tighten/ziggy](https://github.com/tighten/ziggy)
-
-```php
-composer require tightenco/ziggy
-```
+Certifique-se de seguir as melhores práticas de desenvolvimento ao trabalhar com este projeto. Realize testes completos para garantir a funcionalidade e estabilidade do sistema.

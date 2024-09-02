@@ -37,34 +37,31 @@
       </div>
     </div>
 
-    <!-- Mensagem quando não há rotas -->
     <div v-else class="bg-white p-4 rounded-lg shadow-md mb-4 text-center text-gray-500">
       Nenhuma Rota cadastrada
     </div>
 
-    <!-- Componente de Detalhes -->
     <details-router-component
       :isOpen="isDetailsModalOpen"
       :route="selectedRoute"
       @close="closeDetailsModal"
     />
 
-    <!-- Mapa -->
-    <div class="bg-white p-4 rounded-lg shadow-md" v-if="showMapContainer">
-      <div class="h-96" id="map-container"></div>
-    </div>
+    <map-component v-if="showMapContainer" :geoJson="currentGeoJson" />
   </div>
 </template>
 
 <script>
 import { ref, watch } from 'vue';
 import DetailsRouterComponent from "../modal/detailsRouter-component.vue";
+import MapComponent from '../map/map-component.vue';
 import { router } from "@inertiajs/vue3";
 
 export default {
   name: 'RouteTableComponent',
   components: {
-    DetailsRouterComponent
+    DetailsRouterComponent,
+    MapComponent
   },
   props: {
     routes: {
@@ -75,8 +72,8 @@ export default {
   setup(props) {
     const isDetailsModalOpen = ref(false);
     const selectedRoute = ref(null);
-    const map = ref(null);
-    const showMapContainer = ref(true);
+    const currentGeoJson = ref(null);
+    const showMapContainer = ref(false);
 
     const routes = ref(props.routes);
 
@@ -84,15 +81,7 @@ export default {
       routes.value = newRoutes;
     });
 
-    const clearMap = () => {
-      if (map.value) {
-        map.value.remove();
-        map.value = null;
-      }
-    };
-
     const openDetailsModal = (route) => {
-      clearMap();
       showMapContainer.value = false;
       selectedRoute.value = route;
       isDetailsModalOpen.value = true;
@@ -105,26 +94,12 @@ export default {
     };
 
     const deleteUser = (id) => {
-        router.delete(route('route.destroy', { id }))
+      router.delete(route('route.destroy', { id }))
     };
 
     const showMap = (geoJson) => {
-      const parsedGeoJson = JSON.parse(geoJson);
-
-      if (map.value) {
-        map.value.remove();
-      }
-
-      map.value = L.map('map-container').setView(
-        [parsedGeoJson.geometry.coordinates[0][0][1], parsedGeoJson.geometry.coordinates[0][0][0]],
-        13
-      );
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      }).addTo(map.value);
-
-      L.geoJSON(parsedGeoJson).addTo(map.value);
+      currentGeoJson.value = geoJson;
+      showMapContainer.value = true;
     };
 
     return {
@@ -135,6 +110,7 @@ export default {
       closeDetailsModal,
       showMap,
       deleteUser,
+      currentGeoJson,
       showMapContainer
     };
   }
