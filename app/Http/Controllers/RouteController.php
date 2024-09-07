@@ -3,70 +3,46 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TrechoRequest;
-use App\Models\Rodovia;
 use App\Models\Trecho;
-use App\Models\UF;
-use App\Services\GeoService;
-use Illuminate\Http\Request;
+use App\Services\RouteService;
 use Inertia\Inertia;
 
 class RouteController extends Controller
 {
-  protected $geoService;
+  protected $routeService;
 
-  public function __construct(GeoService $geoService)
+  public function __construct(RouteService $routeService)
   {
-    $this->geoService = $geoService;
+    $this->routeService = $routeService;
   }
 
-  public function index(Trecho $trecho, UF $uf, Rodovia $rodovia)
+  public function index()
   {
-    $routes = $trecho->with(['uf', 'rodovia'])->latest()->get();
-    $ufs = $uf->all();
-    $rodovias = $rodovia->all();
+    $routes = $this->routeService->getAllTechos();
+    $ufs = $this->routeService->getAllUfs();
+    $rodovias = $this->routeService->getAllRodovias();
 
     return Inertia::render('Home', compact('routes', 'ufs', 'rodovias'));
   }
 
-  public function create(Rodovia $rodovia, UF $uf)
+  public function create()
   {
-    $rodovias = $rodovia->all();
-    $ufs = $uf->all();
+    $rodovias = $this->routeService->getAllRodovias();
+    $ufs = $this->routeService->getAllUfs();
 
     return Inertia::render('Home', compact('rodovias', 'ufs'));
   }
 
-  public function store(TrechoRequest $request, Rodovia $rodovia, UF $uf, Trecho $trecho)
+  public function store(TrechoRequest $request)
   {
+    $newRouter = $this->routeService->createRoute($request->validated());
 
-    $newRoute = $request->validated();
-    $rodovia = $rodovia->find($newRoute['rodovia_id']);
-    $uf = $uf->find($newRoute['uf_id']);
-
-    $params = [
-      'br' => $rodovia->rodovia,
-      'tipo' => $newRoute['tipo'],
-      'uf' => $uf->UF,
-      'cd_tipo' => 'null',
-      'data' => $newRoute['data_referencia'],
-      'kmi' => $newRoute['kmInicial'],
-      'kmf' => $newRoute['kmFinal'],
-    ];
-
-    $geoData = $this->geoService->getGeoData($params);
-
-    if ($geoData) {
-      $newRoute['geo'] = json_encode($geoData);
-      $trecho->create($newRoute);
-      return to_route('route.index')->with('success', 'Trecho criado com sucesso');
-    }
-
-    return to_route('route.index')->with('error', 'Erro ao gerar GeoJSON');
+    return to_route('route.index')->with($newRouter['status'] ? 'success' : 'error', $newRouter['message']);
   }
 
-  public function show(Trecho $trecho, $id)
+  public function show($id)
   {
-    $trecho = $trecho->find($id);
+    $trecho = $this->routeService->getRouteById($id);
     if (!$trecho) {
       return Inertia::render('Home')->with('error', 'Nenhum trecho encontrado');
     }
@@ -74,62 +50,28 @@ class RouteController extends Controller
 
   }
 
-  public function edit(Trecho $trecho, $id)
+  public function edit(Trecho $trecho,$id)
   {
     $route = $trecho->with(['uf', 'rodovia'])->find($id);
     if (!$route) {
       return Inertia::render('Home')->with('error', 'Nenhum trecho encontrado');
     }
 
-    $ufs = UF::all();
-    $rodovias = Rodovia::all();
+    $ufs = $this->routeService->getAllUfs();
+    $rodovias = $this->routeService->getAllRodovias();
 
     return Inertia::render('Edit', compact('route', 'ufs', 'rodovias'));
   }
 
-  public function update(TrechoRequest $request, Trecho $trecho, $id)
+  public function update(TrechoRequest $request, $id)
   {
-    $route = $trecho->find($id);
-    if (!$route) {
-      return to_route('route.index')->with('error', 'Nenhum trecho encontrado');
-    }
-
-    $routeUpdate = $request->validated();
-    $route->update($routeUpdate);
-
-    // Se os campos responsáveis pelo Map forem atualizados, gere um novo GeoJSON
-    if ($request->hasAny(['rodovia_id', 'uf_id', 'kmInicial', 'kmFinal', 'tipo'])) {
-      $rodovia = Rodovia::find($route->rodovia_id);
-      $uf = UF::find($route->uf_id);
-
-      $params = [
-        'br' => $rodovia->rodovia,
-        'tipo' => $routeUpdate['tipo'],
-        'uf' => $uf->UF,
-        'cd_tipo' => 'null',
-        'data' => $route->data_referencia,
-        'kmi' => $route->kmInicial,
-        'kmf' => $route->kmFinal,
-      ];
-      $geoData = $this->geoService->getGeoData($params);
-
-      if (!$geoData) {
-        return to_route('route.index')->with('error', 'Erro ao gerar GeoJSON');
-      }
-      $route->update(['geo' => json_encode($geoData)]);
-    }
-
-    return to_route('route.index')->with('success', 'Trecho atualizado com sucesso');
+    $updateRouter = $this->routeService->updateRoute($id, $request->validated());
+    return to_route('route.index')->with($updateRouter['status'] ? 'success' : 'error', $updateRouter['message']);
   }
 
-  public function destroy(Trecho $trecho, $id)
+  public function destroy($id)
   {
-    $route = $trecho->with(['uf', 'rodovia'])->find($id);
-    if (!$route) {
-      return to_route('route.index')->with('error', 'Nenhum trecho encontrado');
-    }
-
-    $route->delete();
-    return to_route('route.index')->with('success', 'Trecho deletado com sucesso');
+    $result = $this->routeService->deleteRoute($id);
+    return to_route('route.index')->with($result['status'] ? 'success' : 'error', $result['message']);
   }
 }
