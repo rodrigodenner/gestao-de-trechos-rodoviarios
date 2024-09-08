@@ -1,5 +1,6 @@
 <template>
   <div>
+    <flash-alert v-if="$page.props.flash.success" :message="$page.props.flash.success" type="success"/>
     <create-router-component :ufs="ufs" :rodovias="rodovias" :errors="errors"/>
     <route-table-component :routes="routes"/>
   </div>
@@ -10,11 +11,13 @@ import CreateRouterComponent from "./components/createRouter/createRouter-compon
 import RouteTableComponent from "./components/routeTable/routeTable-component.vue";
 import MasterTemplate from "./Layout/MasterTemplate.vue";
 import MapComponent from "./components/map/map-component.vue";
+import FlashAlert from "./components/flashMessage/flash-alert.vue";
 
 export default {
   name: 'Home',
   layout: MasterTemplate,
   components: {
+    FlashAlert,
     MapComponent,
     RouteTableComponent,
     CreateRouterComponent
