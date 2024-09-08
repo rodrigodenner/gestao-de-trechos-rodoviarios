@@ -53,7 +53,7 @@ class RouteService
       return ['status' => true, 'message' => 'Trecho criado com sucesso'];
     }
 
-    return ['status' => false, 'message' => 'Erro ao gerar GeoJSON'];
+    return ['status' => false, 'message' => 'Erro ao gerar o trecho, favor verificar os dados informados'];
   }
 
   public function getRouteById($id)
@@ -71,7 +71,6 @@ class RouteService
     // Verificar se os campos responsáveis pelo GeoJSON foram atualizados
     $fieldsToCheck = ['rodovia_id', 'uf_id', 'kmInicial', 'kmFinal', 'tipo'];
     if (array_intersect_key(array_flip($fieldsToCheck), $data)) {
-      // Buscar as entidades relacionadas
       $rodovia = Rodovia::find($route->rodovia_id);
       $uf = UF::find($route->uf_id);
 
@@ -87,7 +86,7 @@ class RouteService
 
       $geoData = $this->geoService->getGeoData($params);
       if (!$geoData) {
-        return ['status' => false, 'message' => 'Erro ao gerar GeoJSON'];
+        return ['status' => false, 'message' => 'Erro ao gerar o trecho, favor verificar os dados informados'];
       }
       $route->update(['geo' => json_encode($geoData)]);
     }

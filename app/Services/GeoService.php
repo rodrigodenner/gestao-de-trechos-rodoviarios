@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 
 class GeoService
 {
@@ -15,16 +16,23 @@ class GeoService
         $this->baseUrl = config('geo-api.base_api');
     }
 
-    public function getGeoData(array $params)
-    {
-        $url = $this->baseUrl . '/espacializarlinha';
-        $response = $this->client->request('GET', $url, ['query' => $params]);
+  public function getGeoData(array $params)
+  {
+    $url = $this->baseUrl . '/espacializarlinha';
 
-        if ($response->getStatusCode() === 200) {
-            return json_decode($response->getBody(), true);
-        }
+    try {
+      $response = $this->client->request('GET', $url, ['query' => $params]);
 
+      if ($response->getStatusCode() === 200) {
+        return json_decode($response->getBody(), true);
+      }
+    } catch (RequestException $e) {
+      if ($e->hasResponse()) {
         return null;
+      }
     }
+
+    return null;
+  }
 }
 

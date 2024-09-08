@@ -94,7 +94,8 @@ export default {
     };
 
     const deleteUser = (id) => {
-      router.delete(route('route.destroy', { id }))
+      router.delete(route('route.destroy', { id }));
+      showMapContainer.value = false
     };
 
     const showMap = (geoJson) => {
